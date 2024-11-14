@@ -12,6 +12,7 @@
         <label>Senha: <input type="password" name="senha" required></label><br>
         <button type="submit">Cadastrar</button>
     </form>
-    <a href="index.php?action=listar">Voltar à Lista de Usuários</a>
+    <p><a href="index.php?action=login">Já tem uma conta? Faça login</a></p>
 </body>
 </html>
+

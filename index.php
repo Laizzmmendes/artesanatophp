@@ -9,13 +9,24 @@ $produtoController = new ProdutoController($db);
 $action = $_GET['action'] ?? 'listar';
 $id = $_GET['id'] ?? null;
 
-if ($action === 'cadastrar') {
-    $produtoController->cadastrar($_POST);
-} elseif ($action === 'editar' && $id !== null) {
-    $produtoController->editar($id, $_POST);
-} elseif ($action === 'excluir' && $id !== null) {
-    $produtoController->excluir($id);
+if ($action === 'formularioCadastro') {
+    require 'views/usuarios/cadastrar.php';
+} elseif ($action === 'cadastrar') {
+    $controller->cadastrar($_POST);
+} elseif ($action === 'login') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller->login($_POST);
+    } else {
+        require 'views/usuarios/login.php';
+    }
+} elseif ($action === 'perfil') {
+    $controller->perfil();
+} elseif ($action === 'logout') {
+    $controller->logout();
 } else {
-    // Caso padrão: Listar produtos
-    $produtoController->listar();
+    // Redireciona para o login caso a ação não seja reconhecida
+    header("Location: index.php?action=login");
 }
+
+
+

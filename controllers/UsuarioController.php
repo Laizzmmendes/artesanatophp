@@ -8,86 +8,39 @@ class UsuarioController {
         $this->model = new Usuario($db);
     }
 
-    // Exibir todos os usuários
-    public function listar() {
-        $usuarios = $this->model->read();
-        require 'views/usuarios/listar.php';
-    }
-
-    // Exibir formulário de cadastro de usuário
-    public function formularioCadastro() {
-        require 'views/usuarios/cadastrar.php';
-    }
-
-    // Cadastrar um novo usuário
     public function cadastrar($dados) {
         if (!empty($dados['nome']) && !empty($dados['email']) && !empty($dados['senha'])) {
-            $nome = htmlspecialchars($dados['nome']);
-            $email = htmlspecialchars($dados['email']);
-            $senha = $dados['senha'];
-
-            $this->model->create($nome, $email, $senha);
-            header("Location: index.php?action=listarUsuarios");
-        } else {
-            echo "Preencha todos os campos obrigatórios!";
+            $this->model->create($dados['nome'], $dados['email'], $dados['senha']);
+            header("Location: index.php?action=login");
         }
     }
 
-    // Exibir formulário de edição de usuário
-    public function formularioEdicao($id) {
-        $usuario = $this->model->find($id);
-        if ($usuario) {
-            require 'views/usuarios/editar.php';
-        } else {
-            echo "Usuário não encontrado!";
-        }
-    }
-
-    // Editar um usuário existente
-    public function editar($id, $dados) {
-        if (!empty($dados['nome']) && !empty($dados['email'])) {
-            $nome = htmlspecialchars($dados['nome']);
-            $email = htmlspecialchars($dados['email']);
-            $senha = !empty($dados['senha']) ? $dados['senha'] : null;
-
-            $this->model->update($id, $nome, $email, $senha);
-            header("Location: index.php?action=listarUsuarios");
-        } else {
-            echo "Preencha todos os campos obrigatórios!";
-        }
-    }
-
-    // Excluir um usuário
-    public function excluir($id) {
-        $this->model->delete($id);
-        header("Location: index.php?action=listarUsuarios");
-    }
-
-    // Autenticar o usuário (Login)
-    public function autenticar($dados) {
+    public function login($dados) {
+        session_start();
         if (!empty($dados['email']) && !empty($dados['senha'])) {
-            $email = htmlspecialchars($dados['email']);
-            $senha = $dados['senha'];
-
-            $usuario = $this->model->authenticate($email, $senha);
+            $usuario = $this->model->authenticate($dados['email'], $dados['senha']);
             if ($usuario) {
-                // Login bem-sucedido, armazena os dados do usuário na sessão
-                session_start();
-                $_SESSION['usuario_id'] = $usuario['id'];
-                $_SESSION['usuario_nome'] = $usuario['nome'];
-                header("Location: index.php?action=painel"); // Redireciona ao painel
+                $_SESSION['usuario'] = $usuario;
+                header("Location: index.php?action=perfil");
             } else {
-                echo "Credenciais inválidas!";
+                echo "Login ou senha inválidos.";
             }
-        } else {
-            echo "Preencha todos os campos obrigatórios!";
         }
     }
 
-    // Logout do usuário
     public function logout() {
         session_start();
         session_destroy();
         header("Location: index.php?action=login");
+    }
+
+    public function perfil() {
+        session_start();
+        if (isset($_SESSION['usuario'])) {
+            $usuario = $_SESSION['usuario'];
+            require 'views/usuarios/perfil.php';
+        } else {
+            header("Location: index.php?action=login");
+        }
     }
 }
