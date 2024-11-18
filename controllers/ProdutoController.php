@@ -1,41 +1,29 @@
 <?php
-require_once 'models/Produto.php';
+require_once 'C:\aluno2\xampp\htdocs\artesanato2\models\ProdutoModel.php';
 
 class ProdutoController {
-    private $produto;
+    private $produtoModel;
 
     public function __construct($db) {
-        $this->produto = new Produto($db);
+        $this->produtoModel = new ProdutoModel($db);
     }
 
-    // Listar produtos
-    public function listar() {
-        $produtos = $this->produto->read();
-        include 'views/produtos/listar.php';
+    public function listarProdutos() {
+        return $this->produtoModel->listar();
     }
 
-    // Cadastrar produto
-    public function cadastrar($dados) {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $this->produto->create($dados['nome'], $dados['descricao'], $dados['tipo_material'], $dados['preco']);
-            header("Location: index.php?action=listar");
-        }
-        include 'views/produtos/cadastrar.php';
+    public function cadastrarProduto($nome, $tipo_material, $preco, ) {
+        return $this->produtoModel->cadastrar($nome, $tipo_material, $preco, );
     }
 
-    // Editar produto
-    public function editar($id, $dados) {
-        $produto = $this->produto->find($id);
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $this->produto->update($id, $dados['nome'], $dados['descricao'], $dados['tipo_material'], $dados['preco']);
-            header("Location: index.php?action=listar");
-        }
-        include 'views/produtos/editar.php';
+    public function deletarProduto($id) {
+        return $this->produtoModel->deletar($id);
     }
-
-    // Excluir produto
-    public function excluir($id) {
-        $this->produto->delete($id);
-        header("Location: index.php?action=listar");
+    public function buscarProdutoPorId($id) {
+        return $this->produtoModel->buscarProdutoPorId($id);
+    }
+    public function atualizarProduto($id, $nome, $tipo_material, $preco){
+        return $this->produtoModel->atualizarProduto($id, $nome, $tipo_material, $preco);
     }
 }
+?>
